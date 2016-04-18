@@ -30,7 +30,7 @@ void check(int row, int col, int expected);
 
 __global__ static void compute_result(int *h_result);
 
-int main(void) {
+int main(int argc, char **argv) {
 	double start_time, time_to_compute, time_to_verify;
 
 	printf("Initializing CUDA runtime...\n");	

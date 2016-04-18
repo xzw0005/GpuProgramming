@@ -1,0 +1,9 @@
+1. Which version did you write first: CUDA or OpenACC?
+Ans: As required, OpenACC is the version I wrote first.
+
+2. Which version was easier to write, OpenACC or CUDA? Why?
+Ans: At least for me, OpenACC is easier to write, since the only thing you need to do is to add the directives, and specify which part of the data needs to be transfered between host and device.
+Moreover, for me, when I wrote the CUDA version, I wasted too much time to debug since I forgot to specify the number of blocks in a grid and the number of threads in a block. 
+
+3. If you needed to parallelize code like this in the future, would you prefer to use CUDA or OpenACC?
+Ans: It'll depend I guess. OpenACC is much simpler to write in many cases, but CUDA makes every procedure more clear.
