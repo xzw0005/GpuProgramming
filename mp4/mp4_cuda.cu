@@ -78,7 +78,7 @@ int main() {
     printf("Starting (this may take a while)...\n");
     double start = omp_get_wtime();
 /////////////////////////////////////////////////////////////////
-	uint32_t *d_key, *d_data;
+	uint32_t *d_key, *d_data, *d_encripted;
 	cudaMalloc((void **)&d_key, sizeKey);
 	cudaMalloc((void **)&d_data, sizeData);
 	cudaMalloc((void **)&d_encripted, sizeData);
