@@ -31,11 +31,11 @@ void encrypt(uint32_t *data, const uint32_t *key) {
     data[0]=v0; data[1]=v1;
 }
 
-__global__ static void encryptGpu(uint32_t *data, uint32_t *key) {
+__global__ static void encryptGpu(const uint32_t *encrypted, uint32_t *data, uint32_t *key) {
     /* Try every possible 28-bit integer... */
 	uint32_t k = blockDim.x * blockDim.y + threadIdx.x;
 	if (k <= 0x0FFFFFFF) {
-		uint32_t delta = 0x9e3779b9;
+		uint32_t delta=0x9e3779b9;                             /* a key schedule constant */
 		uint32_t v0 = data[0], v1 = data[1], sum = 0, i;             /* set up */
 		uint32_t k0 = k, k1 = k, k2 = k, k3 = k;
 		for (i=0; i < 32; i++) {                               /* basic cycle start */
@@ -67,10 +67,13 @@ int main() {
 	size_t sizeData = 2 * sizeof(uint32_t);
     uint32_t *key = (uint32_t *)malloc(sizeKey);
 	uint32_t *data = (uint32_t *)malloc(sizeData);
+	uint32_t *encryptedCopy = (uint32_t *)malloc(sizeData);
 	for (int i = 0; i < 4; i++)
 		key[i] = 0;
 	for (int i = 0; i < 2; i ++)
 		data[i] = orig_data[i];
+	for (int i = 0; i < 2; i++)
+		encryptedCopy[i] = encrypted[i];
 
     printf("Starting (this may take a while)...\n");
     double start = omp_get_wtime();
@@ -78,17 +81,20 @@ int main() {
 	uint32_t *d_key, *d_data;
 	cudaMalloc((void **)&d_key, sizeKey);
 	cudaMalloc((void **)&d_data, sizeData);
+	cudaMalloc((void **)&d_encripted, sizeData);
 	
 	cudaMemcpy(d_key, key, sizeKey, cudaMemcpyHostToDevice);
 	cudaMemcpy(d_data, data, sizeData, cudaMemcpyHostToDevice);
+	cudaMemcpy(d_encripted, encryptedCopy, sizeData, cudaMemcpyHostToDevice);
 
 	uint32_t blocksPerGrid = (0x0FFFFFFF + THREADS_PER_BLOCK - 1) / THREADS_PER_BLOCK;
-	encryptGpu<<<blocksPerGrid, THREADS_PER_BLOCK>>>(d_data, d_key);
+	encryptGpu<<<blocksPerGrid, THREADS_PER_BLOCK>>>(d_encripted, d_data, d_key);
 	
 	cudaMemcpy(key, d_key, sizeKey, cudaMemcpyDeviceToHost);
 	
 	cudaFree(d_data);
 	cudaFree(d_key);
+	cudaFree(d_encripted);
 ////////////////////////////////////////////////////////////////
     printf("Elapsed time: %f seconds\n", omp_get_wtime() - start);
 
