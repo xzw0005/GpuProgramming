@@ -35,6 +35,7 @@ __global__ static void encryptGpu(uint32_t *data, uint32_t *key) {
     /* Try every possible 28-bit integer... */
 	uint32_t k = blockDim.x * blockDim.y + threadIdx.x;
 	if (k <= 0x0FFFFFFF) {
+		uint32_t delta = 0x9e3779b9;
 		uint32_t v0 = data[0], v1 = data[1], sum = 0, i;             /* set up */
 		uint32_t k0 = k, k1 = k, k2 = k, k3 = k;
 		for (i=0; i < 32; i++) {                               /* basic cycle start */
