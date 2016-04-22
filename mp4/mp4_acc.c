@@ -43,7 +43,7 @@ int main() {
     for (uint32_t k = 0; k <= 0x0FFFFFFF; k++) {
        
         uint32_t v0 = orig_data[0], v1 = orig_data[1], sum=0, i; 
-		uint32_t delta=0x9e3779b9;                             /* a key schedule constant */
+	uint32_t delta=0x9e3779b9;                             /* a key schedule constant */
         uint32_t k0 = k, k1 = k, k2 = k, k3 = k;
         
 		for (i=0; i < 32; i++) {                               /* basic cycle start */
